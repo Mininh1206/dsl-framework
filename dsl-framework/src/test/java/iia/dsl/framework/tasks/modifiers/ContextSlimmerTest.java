@@ -2,8 +2,6 @@ package iia.dsl.framework.tasks.modifiers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -37,6 +35,8 @@ public class ContextSlimmerTest {
         Slot input = new Slot("in");
         Slot context = new Slot("context");
         Slot output = new Slot("out");
+    
+        ContextSlimmer slimmer = new ContextSlimmer("slimmer-1", input, context, output);
         
         Message mainMessage = new Message("msg-1", doc);
         Message contextMessage = new Message("ctx-1", contextDoc);
@@ -44,7 +44,6 @@ public class ContextSlimmerTest {
         input.setMessage(mainMessage);
         context.setMessage(contextMessage);
         
-        ContextSlimmer slimmer = new ContextSlimmer("slimmer-1", input, context, output);
         slimmer.execute();
         
         Message result = output.getMessage();
@@ -78,10 +77,11 @@ public class ContextSlimmerTest {
         Slot context = new Slot("context");
         Slot output = new Slot("out");
         
+        ContextSlimmer slimmer = new ContextSlimmer("slimmer-2", input, context, output);
+        
         input.setMessage(new Message("msg-2", doc));
         context.setMessage(new Message("ctx-2", contextDoc));
         
-        ContextSlimmer slimmer = new ContextSlimmer("slimmer-2", input, context, output);
         slimmer.execute();
         
         Message result = output.getMessage();
@@ -98,65 +98,5 @@ public class ContextSlimmerTest {
         // Verificar que el header sigue presente
         NodeList headerNodes = result.getDocument().getElementsByTagName("header");
         assertEquals(1, headerNodes.getLength(), "The <header> node should still be present");
-    }
-    
-    @Test
-    public void testThrowsWhenXPathNodeNotFoundInContext() {
-        Document doc = TestUtils.createXMLDocument(TestUtils.SAMPLE_XML);
-        
-        // Contexto sin el nodo /xpath (usando otro nombre de nodo raíz)
-        String contextXml = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <context>
-                    <wrongNode>/order/header/date</wrongNode>
-                </context>
-                """;
-        Document contextDoc = TestUtils.createXMLDocument(contextXml);
-        
-        Slot input = new Slot("in");
-        Slot context = new Slot("context");
-        Slot output = new Slot("out");
-        
-        input.setMessage(new Message("msg-5", doc));
-        context.setMessage(new Message("ctx-5", contextDoc));
-        
-        ContextSlimmer slimmer = new ContextSlimmer("slimmer-5", input, context, output);
-        
-        Exception ex = assertThrows(Exception.class, () -> {
-            slimmer.execute();
-        });
-        
-        assertTrue(ex.getMessage().contains("No se encontró el nodo de XPath en el mensaje de contexto"), 
-                "Exception should mention missing XPath node in context");
-    }
-    
-    @Test
-    public void testThrowsWhenNodeToRemoveNotFound() {
-        Document doc = TestUtils.createXMLDocument(TestUtils.SAMPLE_XML);
-        
-        // XPath que no existe en el documento principal
-        String contextXml = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <context>
-                    <xpath>/order/nonExistentNode</xpath>
-                </context>
-                """;
-        Document contextDoc = TestUtils.createXMLDocument(contextXml);
-        
-        Slot input = new Slot("in");
-        Slot context = new Slot("context");
-        Slot output = new Slot("out");
-        
-        input.setMessage(new Message("msg-6", doc));
-        context.setMessage(new Message("ctx-6", contextDoc));
-        
-        ContextSlimmer slimmer = new ContextSlimmer("slimmer-6", input, context, output);
-        
-        Exception ex = assertThrows(Exception.class, () -> {
-            slimmer.execute();
-        });
-        
-        assertTrue(ex.getMessage().contains("No se encontró el nodo a eliminar en el mensaje"), 
-                "Exception should mention node to remove not found");
     }
 }

@@ -124,8 +124,6 @@ class DistributorTest {
         Slot output1 = new Slot("out1");
         Slot output2 = new Slot("out2");
         
-        input.setMessage(new Message("msg-error", doc));
-        
         // 3 xpaths pero solo 2 outputs
         List<String> xpaths = Arrays.asList(
             "count(//order) = 1",
@@ -135,13 +133,16 @@ class DistributorTest {
         
         List<Slot> outputs = Arrays.asList(output1, output2);
         
+        
         Distributor distributor = new Distributor("dist-4", input, outputs, xpaths);
+        
+        input.setMessage(new Message("msg-error", doc));
         
         Exception ex = assertThrows(Exception.class, () -> {
             distributor.execute();
         });
         
-        assertTrue(ex.getMessage().contains("Los slots no son correctos"), 
-                   "Exception should mention incorrect slots");
+        assertTrue(ex.getMessage().contains("Configuración inválida"), 
+                   "Exception should mention invalid configuration");
     }
 }

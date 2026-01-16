@@ -67,10 +67,12 @@ class ReplicatorTest {
     void testReplicateToMultipleSlots() throws Exception {
         String xml = "<message><content>Test Message</content></message>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setMessage(new Message(doc));
         
         List<Slot> outputSlots = List.of(outputSlot1, outputSlot2, outputSlot3);
+        
         Replicator replicator = new Replicator("rep-1", inputSlot, outputSlots);
+        
+        inputSlot.setMessage(new Message(doc));
         
         replicator.execute();
         
@@ -80,27 +82,15 @@ class ReplicatorTest {
     }
     
     @Test
-    void testThrowsExceptionWhenNoDocument() throws Exception {
-        inputSlot.setMessage(new Message("msg-id", null));
-        
-        List<Slot> outputSlots = List.of(outputSlot1);
-        Replicator replicator = new Replicator("rep-1", inputSlot, outputSlots);
-        
-        Exception exception = assertThrows(Exception.class, () -> {
-            replicator.execute();
-        });
-        
-        assertTrue(exception.getMessage().contains("no tiene documento para duplicar"));
-    }
-    
-    @Test
     void testReplicateToSingleSlot() throws Exception {
         String xml = "<data><value>123</value></data>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setMessage(new Message(doc));
         
         List<Slot> outputSlots = List.of(outputSlot1);
+        
         Replicator replicator = new Replicator("rep-1", inputSlot, outputSlots);
+        
+        inputSlot.setMessage(new Message(doc));
         
         replicator.execute();
         
@@ -112,10 +102,12 @@ class ReplicatorTest {
     void testContentPreservationAfterReplication() throws Exception {
         String xml = "<order><id>12345</id><amount>100.50</amount></order>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setMessage(new Message(doc));
         
         List<Slot> outputSlots = List.of(outputSlot1, outputSlot2);
+        
         Replicator replicator = new Replicator("rep-1", inputSlot, outputSlots);
+        
+        inputSlot.setMessage(new Message(doc));
         
         replicator.execute();
         

@@ -181,10 +181,7 @@ public class MergerTest {
         Slot branch2 = new Slot("branch2");
         Slot output = new Slot("output");
         
-        input1.setMessage(new Message(doc1));
-        input2.setMessage(new Message(doc2));
         
-        // Filtros que aceptan órdenes con al menos 1 item
         Filter filter1 = new Filter("filter1", input1, branch1, 
             "count(/order/items/item) >= 1");
         Filter filter2 = new Filter("filter2", input2, branch2, 
@@ -192,6 +189,9 @@ public class MergerTest {
         
         // Merger combina ambas ramas
         Merger merger = new Merger("merger", List.of(branch1, branch2), output);
+        
+        input1.setMessage(new Message(doc1));
+        input2.setMessage(new Message(doc2));
         
         // Act
         filter1.execute();
