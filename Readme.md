@@ -11,7 +11,7 @@ Este es un framework ligero de integración empresarial (EIP - Enterprise Integr
   * **Transformation:** Translator (XSLT), Aggregator.
   * **Modification:** Enricher, Slimmer.
 * **Conectores:** Abstracción para interactuar con sistemas externos (Archivos, Consola, Bases de Datos, HTTP, colas simuladas).
-* **Ejecución Flexible:** Soporta ejecución secuencial (single-threaded) y concurrente (thread-pool).
+* **Ejecución Flexible:** Soporta ejecución secuencial (single-threaded) y concurrente (thread-pool) con diferentes políticas de ejecución en cada `Flow`.
 
 ## Componentes del Core
 
@@ -40,7 +40,7 @@ Las tareas son las unidades de procesamiento.
 * **FileConnector:** Lectura/Escritura de archivos locales. Soporta directorios.
 * **DataBaseConnector:** Ejecución de queries SQL dinámicas definidas en XML.
 * **ConsoleConnector:** Salida a System.out para debugging.
-* **HttpConnector (No incluido en core pero presente):** Cliente HTTP básico.
+* **HttpConnector:** Cliente HTTP básico.
 
 ## Ejemplo de Uso
 
@@ -65,11 +65,12 @@ Translator translator = new Translator("my-translator", inputSlot, outputSlot, "
 
 // 5. Construir y Ejecutar el Flujo
 Flow flow = new Flow.Builder("MainFlow")
-    .addElement(reader)
-    .addElement(translator)
-    .addElement(writer)
-    .setConcurrent(true) // Ejecución concurrente
+    .concurrent(new FifoPolicy()) // Llamas a concurrent pasándole una política si quieres que sea concurrente
     .build();
+
+flow.addElement(reader);
+flow.addElement(translator);
+flow.addElement(writer);
 
 flow.execute();
 ```
