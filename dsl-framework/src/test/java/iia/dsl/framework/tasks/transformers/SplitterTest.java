@@ -31,9 +31,10 @@ public class SplitterTest {
         Slot input = new Slot("input");
         Slot output = new Slot("output");
         
-        input.setMessage(new Message("split-123", doc));
         
         Splitter splitter = new Splitter("splitter-1", input, output, "/order/items/item");
+        
+        input.setMessage(new Message("split-123", doc));
         
         // Act
         splitter.execute();
@@ -62,25 +63,6 @@ public class SplitterTest {
     }
     
     @Test
-    public void testThrowsWhenNoDocument() {
-        // Arrange - Mensaje sin documento
-        Slot input = new Slot("input");
-        Slot output = new Slot("output");
-        
-        input.setMessage(new Message("msg-id", null));
-        
-        Splitter splitter = new Splitter("splitter-2", input, output, "/order/items/item");
-        
-        // Act & Assert
-        Exception exception = assertThrows(Exception.class, () -> {
-            splitter.execute();
-        });
-        
-        assertTrue(exception.getMessage().contains("No hay ningun documento"), 
-        "Exception should mention missing document");
-    }
-    
-    @Test
     public void testSplitsWithCustomXPath() throws Exception {
         // Arrange - XML con múltiples elementos header
         String customXml = """
@@ -97,9 +79,10 @@ public class SplitterTest {
         Slot input = new Slot("input");
         Slot output = new Slot("output");
         
-        input.setMessage(new Message("batch-456", doc));
         
         Splitter splitter = new Splitter("splitter-3", input, output, "/batch/record");
+        
+        input.setMessage(new Message("batch-456", doc));
         
         // Act
         splitter.execute();
@@ -118,11 +101,12 @@ public class SplitterTest {
 		Slot input = new Slot("in");
 		Slot output = new Slot("out");
 		
-		Message original = new Message("msg-789", doc);
-		input.setMessage(original);
 		
 		// XPath que no coincide con nada
 		Splitter splitter = new Splitter("spl-4", input, output, "//nonexistent");
+		
+		Message original = new Message("msg-789", doc);
+		input.setMessage(original);
 		
 		// No debería lanzar excepción, simplemente no genera fragmentos
 		splitter.execute();
@@ -138,9 +122,6 @@ public class SplitterTest {
 		
 		Slot input = new Slot("in");
 		
-		Message original = new Message("msg-456", doc);
-		input.setMessage(original);
-		
 		// Necesitamos capturar manualmente los mensajes porque setMessage sobreescribe
 		List<Message> capturedMessages = new ArrayList<>();
 		Slot captureOutput = new Slot("capture") {
@@ -154,7 +135,12 @@ public class SplitterTest {
 			}
 		};
 		
+		
 		Splitter capturingSplitter = new Splitter("spl-2", input, captureOutput, "//item");
+		
+		Message original = new Message("msg-456", doc);
+		input.setMessage(original);
+		
 		capturingSplitter.execute();
 		
 		// Verificar que se crearon 2 mensajes

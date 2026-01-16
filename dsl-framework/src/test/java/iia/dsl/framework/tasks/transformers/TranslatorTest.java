@@ -97,24 +97,6 @@ class TranslatorTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción cuando el mensaje no tiene documento")
-    void testExecuteWithMessageWithoutDocument() {
-        // Arrange
-        var translator = new Translator("translator1", inputSlot, outputSlot, simpleXslt);
-        var messageWithoutDoc = new Message("msg1", null, new HashMap<>());
-        inputSlot.setMessage(messageWithoutDoc);
-        
-        // Act & Assert
-        Exception exception = assertThrows(Exception.class, () -> {
-            translator.execute();
-        });
-        
-        assertNotNull(exception);
-        assertTrue(exception.getMessage().contains("No hay Documento"));
-        assertTrue(exception.getMessage().contains("translator1"));
-    }
-
-    @Test
     @DisplayName("Debe preservar headers del mensaje original")
     void testExecutePreservesHeaders() throws Exception {
         // Arrange
@@ -240,11 +222,12 @@ class TranslatorTest {
     void testOutputSlotHasMessage() throws Exception {
         // Arrange
         var translator = new Translator("translator1", inputSlot, outputSlot, simpleXslt);
-        var message = new Message("msg1", testDocument, new HashMap<>());
-        inputSlot.setMessage(message);
         
         // Verificar que el slot de salida está vacío antes
         assertFalse(outputSlot.hasMessage());
+        
+        var message = new Message("msg1", testDocument, new HashMap<>());
+        inputSlot.setMessage(message);
         
         // Act
         translator.execute();

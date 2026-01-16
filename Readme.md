@@ -79,6 +79,20 @@ flow.execute();
 
 ## Compilación
 
+### Ubicarse en la carpeta del proyecto:
+
+```bash
+cd dsl-framework
+```
+
+### Compilar proyecto
+
 ```bash
 mvn clean install
+```
+
+### Compilar sin ejecutar tests
+
+```bash
+mvn clean install -DskipTests
 ```

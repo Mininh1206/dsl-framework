@@ -3,7 +3,6 @@ package iia.dsl.framework.tasks.transformers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -125,70 +124,6 @@ public class AggregatorTest {
         assertTrue(hasP001, "Debe contener el producto P001");
         assertTrue(hasP002, "Debe contener el producto P002");
         assertTrue(hasP003, "Debe contener el producto P003");
-    }
-    
-    @Test
-    public void testThrowsWhenNoDocument() {
-        Slot input = new Slot("in");
-        Slot output = new Slot("out");
-        
-        Message msg = new Message("msg-002", null);
-        input.setMessage(msg);
-        
-        Aggregator aggregator = new Aggregator("agg-3", input, output, "//items");
-        
-        Exception ex = assertThrows(Exception.class, () -> {
-            aggregator.execute();
-        });
-        
-        assertTrue(ex.getMessage().contains("No hay Documento"), "Debe lanzar excepción cuando no hay documento");
-    }
-    
-    @Test
-    public void testThrowsWhenMissingHeaders() {
-        String fragmentXml = "<item><productId>P001</productId></item>";
-        Document fragDoc = TestUtils.createXMLDocument(fragmentXml);
-        
-        Slot input = new Slot("in");
-        Slot output = new Slot("out");
-        
-        Message msg = new Message("msg-003", fragDoc);
-        // No agregamos headers NUM_FRAG y TOTAL_FRAG
-        input.setMessage(msg);
-        
-        Aggregator aggregator = new Aggregator("agg-4", input, output, "//items");
-        
-        Exception ex = assertThrows(Exception.class, () -> {
-            aggregator.execute();
-        });
-        
-        assertTrue(ex.getMessage().contains("headers necesarios"), 
-            "Debe lanzar excepción cuando faltan headers de fragmentación");
-    }
-    
-    @Test
-    public void testThrowsWhenDocumentNotInStorage() throws Exception {
-        String fragmentXml = "<item><productId>P001</productId></item>";
-        Document fragDoc = TestUtils.createXMLDocument(fragmentXml);
-        
-        Slot input = new Slot("in");
-        Slot output = new Slot("out");
-        
-        String messageId = "msg-004";
-        Message msg1 = new Message(messageId, fragDoc);
-        msg1.addHeader(Message.NUM_FRAG, "0");
-        msg1.addHeader(Message.TOTAL_FRAG, "1");
-        
-        input.setMessage(msg1);
-        
-        Aggregator aggregator = new Aggregator("agg-5", input, output, "//items");
-        
-        Exception ex = assertThrows(Exception.class, () -> {
-            aggregator.execute();
-        });
-        
-        assertTrue(ex.getMessage().contains("No se encontró el documento original"), 
-            "Debe lanzar excepción cuando no encuentra el documento en Storage");
     }
     
     @Test

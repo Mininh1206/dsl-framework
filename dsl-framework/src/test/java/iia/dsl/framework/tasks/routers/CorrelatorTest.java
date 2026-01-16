@@ -160,8 +160,8 @@ public class CorrelatorTest {
             correlator.execute();
         });
 
-        assertTrue(ex.getMessage().contains("slots no son correctos"), 
-            "Exception should mention incorrect slots");
+        assertTrue(ex.getMessage().contains("Configuración inválida"), 
+            "Exception should mention invalid configuration");
     }
 
     @Test
@@ -182,8 +182,8 @@ public class CorrelatorTest {
             correlator.execute();
         });
 
-        assertTrue(ex.getMessage().contains("slots no son correctos"), 
-            "Exception should mention incorrect slots");
+        assertTrue(ex.getMessage().contains("Configuración inválida"), 
+            "Exception should mention invalid configuration");
     }
 
     @Test
